@@ -1,13 +1,23 @@
 package com.ibm.im.Service;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ibm.im.dao.StudentDao;
 import com.ibm.im.dto.CreateStudentRequestDto;
+import com.ibm.im.dto.MappingStudentToCourseRequestDto;
 import com.ibm.im.dto.ResponseDto;
+import com.ibm.im.entity.CourseEntity;
+import com.ibm.im.entity.MappingEntity;
 import com.ibm.im.entity.StudentEntity;
+import com.ibm.im.repository.CourseRepository;
+import com.ibm.im.repository.MappingRepository;
 import com.ibm.im.repository.StudentRepository;
 
 @Service
@@ -16,12 +26,16 @@ public class StudentService {
 	private StudentDao studentDao;
 	@Autowired
 	private StudentRepository studentRepository;
+	@Autowired
+	private CourseRepository courseRepository;
+	@Autowired
+	private MappingRepository mappingRepository;
 	
 	public ResponseDto createStudent(CreateStudentRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		if(requestDto.getId()==null||requestDto.getName()==null||requestDto.getName().trim().equals("")) {
 			responseDto.setCode(400);
-			responseDto.setUserMessage("Invalid data received");
+			responseDto.setUserMessage("Trying to insert null values");
 			return responseDto;
 			
 		}
@@ -44,6 +58,55 @@ public class StudentService {
 		studentEntity = studentRepository.save(studentEntity);
 		responseDto.setCode(200);
 		responseDto.setUserMessage("Student Inserted Successfully");
+		return responseDto;
+		
+	}
+	public ResponseDto mapCourses( MappingStudentToCourseRequestDto requestDto) {
+		System.out.println("from service");
+		ResponseDto responseDto = new ResponseDto();
+		if(requestDto.getStudentId()==null||requestDto.getCourseIdList()==null) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("Trying to insert null values");
+			return responseDto;
+		}
+		if(requestDto.getStudentId()<=0) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("Invalid data received");
+			return responseDto;
+		}
+		if(studentRepository.findById(requestDto.getStudentId()).isEmpty()) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("Student is not exist with this id");
+			return responseDto;
+		}
+		if(mappingRepository.findById(requestDto.getId()).isPresent()) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("data already exist with this id");
+			return responseDto;
+		}
+		
+		
+		Optional<StudentEntity> studentId = studentRepository.findById(requestDto.getStudentId());
+		StudentEntity studentEntity = studentId.get();
+		
+		List<CourseEntity> courseIdList = courseRepository.findAllById(requestDto.getCourseIdList());
+		List<MappingEntity> mappingEntityList=new ArrayList();
+		//int i=60;
+		for (CourseEntity courseEntity : courseIdList) {
+			
+			MappingEntity mappingEntity = new MappingEntity();
+	
+			mappingEntity.setCourseEntity(courseEntity);
+			mappingEntity.setStudentEntity(studentEntity);
+			mappingEntityList.add(mappingEntity);
+			//i++;
+		}
+		
+		mappingRepository.saveAll(mappingEntityList);
+		
+		responseDto.setCode(200);
+		responseDto.setUserMessage("Student mapped with Courses");
+		
 		return responseDto;
 		
 	}
