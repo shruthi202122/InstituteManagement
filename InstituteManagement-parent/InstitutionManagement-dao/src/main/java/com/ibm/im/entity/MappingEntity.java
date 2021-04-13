@@ -14,7 +14,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "Student_Course_Mapping",uniqueConstraints = @UniqueConstraint(columnNames = {"student_id","course_id"},name = "UK_STUDENT_COURSE"))
 public class MappingEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	@ManyToOne
 	@JoinColumn(name = "student_id",foreignKey = @ForeignKey(name = "FK_MAPPING_2_STUDENT"))

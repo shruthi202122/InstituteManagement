@@ -1,11 +1,10 @@
- package com.ibm.im.Service;
+package com.ibm.im.Service;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ibm.im.dao.CourseDao;
 import com.ibm.im.dto.CourseCreateRequestDto;
 import com.ibm.im.dto.ResponseDto;
 import com.ibm.im.entity.CourseEntity;
@@ -13,8 +12,6 @@ import com.ibm.im.repository.CourseRepository;
 
 @Service
 public class CourseService {
-	@Autowired
-	private CourseDao courseDao;
 	@Autowired
 	private CourseRepository courseRepository;
 
@@ -26,17 +23,17 @@ public class CourseService {
 			responseDto.setUserMessage("Invaild data recieved");
 			return responseDto;
 		}
-		if(requestDto.getId()<=0) {
+		if (requestDto.getId() <= 0) {
 			responseDto.setCode(400);
 			responseDto.setUserMessage("Id must be greater than zero");
 			return responseDto;
 		}
 
-		//CourseEntity entity = courseDao.findById(requestDto.getId());
+		// CourseEntity entity = courseDao.findById(requestDto.getId());
 		Optional<CourseEntity> optional = courseRepository.findById(requestDto.getId());
 
 		if (optional.isPresent()) {
-			//courseEntity=optional.get();
+			// courseEntity=optional.get();
 			responseDto.setCode(400);
 			responseDto.setUserMessage("course already exist");
 			return responseDto;
@@ -45,10 +42,19 @@ public class CourseService {
 		CourseEntity courseEntity = new CourseEntity();
 		courseEntity.setId(requestDto.getId());
 		courseEntity.setName(requestDto.getName());
-		//courseDao.save(courseEntity);
+		// courseDao.save(courseEntity);
 		courseEntity = courseRepository.save(courseEntity);
 		responseDto.setCode(200);
 		responseDto.setUserMessage("course created successfully");
 		return responseDto;
+	}
+
+	public void update() {
+		Integer courseId = null;
+		Integer duration = null;
+		Optional<CourseEntity> optional = courseRepository.findById(courseId);
+		CourseEntity courseEntity = optional.get();
+		// courseEntity.setDuration(duration);
+		courseRepository.save(courseEntity);
 	}
 }
