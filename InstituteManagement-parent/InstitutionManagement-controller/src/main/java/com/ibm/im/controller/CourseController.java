@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ibm.im.Service.CourseService;
 import com.ibm.im.dto.CourseCreateRequestDto;
 import com.ibm.im.dto.ResponseDto;
+import com.ibm.im.dto.UpdateCourseRequestDto;
 
 @RestController
 public class CourseController {
@@ -32,6 +33,22 @@ public class CourseController {
 			responseDto.setUserMessage("sorry something went wrong");
 		}
 
+		return responseDto;
+	}
+	
+	@PostMapping(path = "/api/course/update")
+	public @ResponseBody ResponseDto updateCourse(@RequestBody UpdateCourseRequestDto requestDto) {
+		System.out.println("from CourseController");
+		ResponseDto responseDto;
+		try {
+			responseDto = courseService.updateCourse(requestDto);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			responseDto = new ResponseDto();
+			responseDto.setCode(500);
+			responseDto.setUserMessage("sorry something went wrong");
+		}
 		return responseDto;
 	}
 	

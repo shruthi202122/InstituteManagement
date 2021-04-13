@@ -1,16 +1,14 @@
 package com.ibm.im.dto;
 
-public class CourseCreateRequestDto {
-
-	private String name;
+public class UpdateCourseRequestDto {
+	private Integer courseId;
 	private Integer durationDays;
-
-	public String getName() {
-		return name;
+	public Integer getCourseId() {
+		return courseId;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCourseId(Integer courseId) {
+		this.courseId = courseId;
 	}
 
 	public Integer getDurationDays() {
@@ -20,5 +18,7 @@ public class CourseCreateRequestDto {
 	public void setDurationDays(Integer durationDays) {
 		this.durationDays = durationDays;
 	}
+
+	
 
 }

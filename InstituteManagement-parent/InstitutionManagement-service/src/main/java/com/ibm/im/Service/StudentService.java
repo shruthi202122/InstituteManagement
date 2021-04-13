@@ -29,26 +29,12 @@ public class StudentService {
 
 	public ResponseDto createStudent(CreateStudentRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
-		if (requestDto.getId() == null || requestDto.getName() == null || requestDto.getName().trim().equals("")) {
+		if (requestDto.getName() == null || requestDto.getName().trim().equals("")) {
 			responseDto.setCode(400);
 			responseDto.setUserMessage("Trying to insert null values");
 			return responseDto;
-
 		}
-		if (requestDto.getId() <= 0) {
-			responseDto.setCode(400);
-			responseDto.setUserMessage("Invalid data received");
-			return responseDto;
-		}
-//		if(studentDao.findById(requestDto.getId())!=null) {
-		if (studentRepository.findById(requestDto.getId()).isPresent()) {
-			responseDto.setCode(400);
-			responseDto.setUserMessage("Student is already exist with this id");
-			return responseDto;
-		}
-
 		StudentEntity studentEntity = new StudentEntity();
-		studentEntity.setId(requestDto.getId());
 		studentEntity.setName(requestDto.getName());
 		// studentDao.save(studentEntity);
 		studentEntity = studentRepository.save(studentEntity);
@@ -67,17 +53,7 @@ public class StudentService {
 			responseDto.setUserMessage("Trying to insert null values");
 			return responseDto;
 		}
-		if (requestDto.getStudentId() <= 0 || requestDto.getCourseIdList().stream().anyMatch(cid -> cid < 0)) {
-			responseDto.setCode(400);
-			responseDto.setUserMessage("Invalid data received");
-			return responseDto;
-		}
-		/*
-		 * if(requestDto.getStudentId()!=null&&requestDto.getCourseIdList()!=null) {
-		 * responseDto.setCode(400);
-		 * responseDto.setUserMessage("Trying to insert duplicate data"); return
-		 * responseDto; }
-		 */
+
 		List<MappingEntity> meList = mappingRepository
 				.findAllByStudentEntityIdAndCourseEntityIdIn(requestDto.getStudentId(), requestDto.getCourseIdList());
 		if (!meList.isEmpty()) {
