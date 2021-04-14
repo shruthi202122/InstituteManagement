@@ -7,12 +7,15 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ibm.im.dto.CreateStudentAddressRequestDto;
 import com.ibm.im.dto.CreateStudentRequestDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
 import com.ibm.im.dto.ResponseDto;
+import com.ibm.im.entity.AddressEntity;
 import com.ibm.im.entity.CourseEntity;
 import com.ibm.im.entity.MappingEntity;
 import com.ibm.im.entity.StudentEntity;
+import com.ibm.im.repository.AddressRepository;
 import com.ibm.im.repository.CourseRepository;
 import com.ibm.im.repository.MappingRepository;
 import com.ibm.im.repository.StudentRepository;
@@ -26,6 +29,8 @@ public class StudentService {
 	private CourseRepository courseRepository;
 	@Autowired
 	private MappingRepository mappingRepository;
+	@Autowired
+	private AddressRepository addressRepository;
 
 	public ResponseDto createStudent(CreateStudentRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
@@ -34,12 +39,33 @@ public class StudentService {
 			responseDto.setUserMessage("Trying to insert null values");
 			return responseDto;
 		}
+
 		StudentEntity studentEntity = new StudentEntity();
 		studentEntity.setName(requestDto.getName());
 		// studentDao.save(studentEntity);
-		studentEntity = studentRepository.save(studentEntity);
+
+		List<CreateStudentAddressRequestDto> addressDtoList = requestDto.getAddressDtoList();
+		List<AddressEntity> addressEntitiesList = new ArrayList<>();
+
+		for (CreateStudentAddressRequestDto createStudentAddressRequestDto : addressDtoList) {
+			AddressEntity addressEntity = new AddressEntity();
+			addressEntity.setStreet(createStudentAddressRequestDto.getStreet());
+			addressEntity.setCity(createStudentAddressRequestDto.getCity());
+			addressEntity.setState(createStudentAddressRequestDto.getState());
+			addressEntity.setType(createStudentAddressRequestDto.getType());
+			addressEntity.setStudentEntity(studentEntity);
+			System.out.println("adding Address to addressEntityList");
+			addressEntitiesList.add(addressEntity);
+		}
+
+		studentEntity.setAddressEntities(addressEntitiesList);
+		System.out.println("inserting student");
+		studentRepository.save(studentEntity);
+	
+
 		responseDto.setCode(200);
 		responseDto.setUserMessage("Student Inserted Successfully");
+
 		return responseDto;
 
 	}
@@ -93,4 +119,5 @@ public class StudentService {
 		return responseDto;
 
 	}
+
 }

@@ -2,6 +2,7 @@ package com.ibm.im.entity;
 
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,11 +19,11 @@ public class StudentEntity {
 	private Integer id;
 	@Column(nullable = false)
 	private String name;
-	
+
 	@OneToMany(mappedBy = "studentEntity")
 	private List<MappingEntity> mappingEntities;
-	
-	@OneToMany(mappedBy = "studentEntity")
+
+	@OneToMany(mappedBy = "studentEntity", cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	private List<AddressEntity> addressEntities;
 
 	public Integer getId() {
@@ -57,6 +58,4 @@ public class StudentEntity {
 		this.addressEntities = addressEntities;
 	}
 
-
-	
 }
