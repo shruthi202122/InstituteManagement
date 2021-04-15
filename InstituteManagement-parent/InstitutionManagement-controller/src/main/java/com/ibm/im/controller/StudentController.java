@@ -3,12 +3,13 @@ package com.ibm.im.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.im.Service.StudentService;
 import com.ibm.im.dto.CreateStudentRequestDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
+import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
+import com.ibm.im.dto.RemoveStudentRequestDto;
 import com.ibm.im.dto.ResponseDto;
 
 @RestController
@@ -47,5 +48,39 @@ public class StudentController {
 		}
 
 		return responseDto;
+	}
+
+	@PostMapping(path = "/api/student/removefromcourse")
+	public ResponseDto removeStudentFromCourse(@RequestBody RemoveStudentFromCourseRequestDto requestDto) {
+		System.out.println("From removeStudentFromCourse()-Controller");
+		ResponseDto responseDto;
+		try {
+			responseDto = studentService.removeStudentFromCourse(requestDto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseDto = new ResponseDto();
+			responseDto.setCode(500);
+			responseDto.setUserMessage("Something went wrong");
+		}
+
+		return responseDto;
+
+	}
+
+	@PostMapping(path = "/api/student/removestudent")
+	public ResponseDto removeStudent(@RequestBody RemoveStudentRequestDto requestDto) {
+		System.out.println("From removeStudentFromCourse()-Controller");
+		ResponseDto responseDto;
+		try {
+			responseDto = studentService.removeStudent(requestDto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseDto = new ResponseDto();
+			responseDto.setCode(500);
+			responseDto.setUserMessage("Something went wrong");
+		}
+
+		return responseDto;
+
 	}
 }

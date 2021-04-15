@@ -10,14 +10,16 @@ import org.springframework.stereotype.Service;
 import com.ibm.im.dto.CreateStudentAddressRequestDto;
 import com.ibm.im.dto.CreateStudentRequestDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
+import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
+import com.ibm.im.dto.RemoveStudentRequestDto;
 import com.ibm.im.dto.ResponseDto;
 import com.ibm.im.entity.AddressEntity;
 import com.ibm.im.entity.CourseEntity;
-import com.ibm.im.entity.MappingEntity;
+import com.ibm.im.entity.StudentCourseMappingEntity;
 import com.ibm.im.entity.StudentEntity;
 import com.ibm.im.repository.AddressRepository;
 import com.ibm.im.repository.CourseRepository;
-import com.ibm.im.repository.MappingRepository;
+import com.ibm.im.repository.StudentCourseMappingRepository;
 import com.ibm.im.repository.StudentRepository;
 
 @Service
@@ -28,7 +30,7 @@ public class StudentService {
 	@Autowired
 	private CourseRepository courseRepository;
 	@Autowired
-	private MappingRepository mappingRepository;
+	private StudentCourseMappingRepository studentCourseMappingRepository;
 	@Autowired
 	private AddressRepository addressRepository;
 
@@ -61,7 +63,6 @@ public class StudentService {
 		studentEntity.setAddressEntities(addressEntitiesList);
 		System.out.println("inserting student");
 		studentRepository.save(studentEntity);
-	
 
 		responseDto.setCode(200);
 		responseDto.setUserMessage("Student Inserted Successfully");
@@ -80,7 +81,7 @@ public class StudentService {
 			return responseDto;
 		}
 
-		List<MappingEntity> meList = mappingRepository
+		List<StudentCourseMappingEntity> meList = studentCourseMappingRepository
 				.findAllByStudentEntityIdAndCourseEntityIdIn(requestDto.getStudentId(), requestDto.getCourseIdList());
 		if (!meList.isEmpty()) {
 			responseDto.setCode(400);
@@ -98,12 +99,12 @@ public class StudentService {
 		StudentEntity studentEntity = optional.get();
 
 		List<CourseEntity> courseIdList = courseRepository.findAllById(requestDto.getCourseIdList());
-		List<MappingEntity> mappingEntityList = new ArrayList<>();
+		List<StudentCourseMappingEntity> mappingEntityList = new ArrayList<>();
 		System.out.println("mapping started");
 		// int i=60;
 		for (CourseEntity courseEntity : courseIdList) {
 
-			MappingEntity mappingEntity = new MappingEntity();
+			StudentCourseMappingEntity mappingEntity = new StudentCourseMappingEntity();
 
 			mappingEntity.setCourseEntity(courseEntity);
 			mappingEntity.setStudentEntity(studentEntity);
@@ -111,7 +112,7 @@ public class StudentService {
 			// i++;
 		}
 
-		mappingRepository.saveAll(mappingEntityList);
+		studentCourseMappingRepository.saveAll(mappingEntityList);
 
 		responseDto.setCode(200);
 		responseDto.setUserMessage("Student mapped with Courses");
@@ -120,4 +121,47 @@ public class StudentService {
 
 	}
 
+	public ResponseDto removeStudentFromCourse(RemoveStudentFromCourseRequestDto requestDto) {
+		System.out.println("From removeStudentFromCourse-Service");
+		ResponseDto responseDto = new ResponseDto();
+		StudentEntity studentEntity = new StudentEntity();
+		studentEntity.setId(requestDto.getStudentId());
+		CourseEntity courseEntity = new CourseEntity();
+		courseEntity.setId(requestDto.getCourseId());
+		Optional<StudentCourseMappingEntity> mappingEntity = studentCourseMappingRepository
+				.findByStudentEntityIdAndCourseEntityId(studentEntity.getId(), courseEntity.getId());
+		if(mappingEntity.isEmpty()) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("No such data is present with specified data");
+			return responseDto;
+		}
+		StudentCourseMappingEntity studentCourseMappingEntity = mappingEntity.get();
+
+		System.out.println("ready to delete data from db");
+		studentCourseMappingRepository.delete(studentCourseMappingEntity);
+		responseDto.setCode(200);
+		responseDto.setUserMessage("StudentCourse mapping is deleted with specified data");
+
+		return responseDto;
+	}
+
+	public ResponseDto removeStudent(RemoveStudentRequestDto requestDto) {
+		ResponseDto responseDto = new ResponseDto();
+		StudentEntity studentEntity = new StudentEntity();
+		studentEntity.setId(requestDto.getStudentId());
+		Optional<StudentEntity> id = studentRepository.findById(studentEntity.getId());
+		if(id.isEmpty()) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("student not Found with specified id");
+			return responseDto;
+		}
+		StudentEntity studentEntity2 = id.get();
+		studentRepository.delete(studentEntity2);
+		
+		responseDto.setCode(200);
+		responseDto.setUserMessage("StudentCourse mapping is deleted with specified data");
+
+		return responseDto;
+
+	}
 }

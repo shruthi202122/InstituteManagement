@@ -13,6 +13,7 @@ import com.ibm.im.dto.StudentDto;
 public class InstitutionManagementController {
 	@Autowired
 	private InstitutionManagementService service;
+
 	@GetMapping(path = "/api/student/getList")
 	public List<StudentDto> getStudentData() {
 		List studentData = service.getStudentData();

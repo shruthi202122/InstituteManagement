@@ -16,15 +16,15 @@ public class CourseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+
 	@Column(nullable = false)
 	private String name;
-	
+
 	@Column(nullable = false)
 	private Integer durationDays;
-	
+
 	@OneToMany(mappedBy = "courseEntity")
-	private List<MappingEntity> mappingEntities;
+	private List<StudentCourseMappingEntity> studentCourseMappingEntities;
 
 	public Integer getId() {
 		return id;
@@ -42,12 +42,12 @@ public class CourseEntity {
 		this.name = name;
 	}
 
-	public List<MappingEntity> getMappingEntities() {
-		return mappingEntities;
+	public List<StudentCourseMappingEntity> getStudentCourseMappingEntities() {
+		return studentCourseMappingEntities;
 	}
 
-	public void setMappingEntities(List<MappingEntity> mappingEntities) {
-		this.mappingEntities = mappingEntities;
+	public void setStudentCourseMappingEntities(List<StudentCourseMappingEntity> studentCourseMappingEntities) {
+		this.studentCourseMappingEntities = studentCourseMappingEntities;
 	}
 
 	public Integer getDurationDays() {
@@ -58,8 +58,4 @@ public class CourseEntity {
 		this.durationDays = durationDays;
 	}
 
-	
-	
-	
-	
 }
