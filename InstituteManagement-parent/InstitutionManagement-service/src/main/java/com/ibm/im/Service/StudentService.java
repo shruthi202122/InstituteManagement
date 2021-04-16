@@ -122,14 +122,10 @@ public class StudentService {
 	}
 
 	public ResponseDto removeStudentFromCourse(RemoveStudentFromCourseRequestDto requestDto) {
-		System.out.println("From removeStudentFromCourse-Service");
+		System.out.println("From removeStudentFromCourse()-Service");
 		ResponseDto responseDto = new ResponseDto();
-		StudentEntity studentEntity = new StudentEntity();
-		studentEntity.setId(requestDto.getStudentId());
-		CourseEntity courseEntity = new CourseEntity();
-		courseEntity.setId(requestDto.getCourseId());
 		Optional<StudentCourseMappingEntity> mappingEntity = studentCourseMappingRepository
-				.findByStudentEntityIdAndCourseEntityId(studentEntity.getId(), courseEntity.getId());
+				.findByStudentEntityIdAndCourseEntityId(requestDto.getStudentId(), requestDto.getCourseId());
 		if(mappingEntity.isEmpty()) {
 			responseDto.setCode(400);
 			responseDto.setUserMessage("No such data is present with specified data");
@@ -147,16 +143,14 @@ public class StudentService {
 
 	public ResponseDto removeStudent(RemoveStudentRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
-		StudentEntity studentEntity = new StudentEntity();
-		studentEntity.setId(requestDto.getStudentId());
-		Optional<StudentEntity> id = studentRepository.findById(studentEntity.getId());
+		Optional<StudentEntity> id = studentRepository.findById(requestDto.getStudentId());
 		if(id.isEmpty()) {
 			responseDto.setCode(400);
 			responseDto.setUserMessage("student not Found with specified id");
 			return responseDto;
 		}
-		StudentEntity studentEntity2 = id.get();
-		studentRepository.delete(studentEntity2);
+		StudentEntity studentEntity = id.get();
+		studentRepository.delete(studentEntity);
 		
 		responseDto.setCode(200);
 		responseDto.setUserMessage("StudentCourse mapping is deleted with specified data");

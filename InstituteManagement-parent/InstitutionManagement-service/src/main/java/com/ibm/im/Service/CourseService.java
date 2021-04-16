@@ -87,22 +87,13 @@ public class CourseService {
 	public ResponseDto removeCourseMappings(RemoveCourseMappingsRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		System.out.println("From removeCourseMappings()-Service");
-		CourseEntity courseEntity = new CourseEntity();
-		courseEntity.setId(requestDto.getCourseId());
+		
 		List<StudentCourseMappingEntity> studentCourseMappingEntities = studentCourseMappingRepository
-				.findAllByCourseEntityId(courseEntity.getId());
+				.findAllByCourseEntityId(requestDto.getCourseId());
 		if(studentCourseMappingEntities.isEmpty()) {
 			responseDto.setCode(400);
 			responseDto.setUserMessage("No mappings found with specified courseId");
 			return responseDto;
-		}
-		List<StudentCourseMappingEntity> mappingEntityList = new ArrayList<>();
-		for (StudentCourseMappingEntity studentCourseMappingEntity : studentCourseMappingEntities) {
-			StudentCourseMappingEntity mappingEntity = new StudentCourseMappingEntity();
-			StudentEntity studentEntity = new StudentEntity();
-			mappingEntity.setCourseEntity(courseEntity);
-			mappingEntity.setStudentEntity(studentEntity);
-			mappingEntityList.add(mappingEntity);
 		}
 		System.out.println("ready to delete data from db");
 
