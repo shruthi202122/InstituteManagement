@@ -1,5 +1,6 @@
 package com.ibm.im.controller;
 
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,12 +16,14 @@ import com.ibm.im.dto.UpdateCourseRequestDto;
 @RestController
 public class CourseController {
 
+	private Logger logger;
+
 	@Autowired
 	private CourseService courseService;
 
 	@PostMapping(path = "/api/course/create")
 	public @ResponseBody ResponseDto createCourse(@RequestBody CourseCreateRequestDto requestDto) {
-		System.out.println("from createCourse()-Controller");
+		logger.info("from createCourse()-Controller");
 		ResponseDto responseDto = courseService.createCourse(requestDto);
 
 		return responseDto;
@@ -28,7 +31,7 @@ public class CourseController {
 
 	@PostMapping(path = "/api/course/update")
 	public @ResponseBody ResponseDto updateCourse(@RequestBody UpdateCourseRequestDto requestDto) {
-		System.out.println("from updateCourse()-Controller");
+		logger.info("from updateCourse()-Controller");
 		ResponseDto responseDto = courseService.updateCourse(requestDto);
 
 		return responseDto;
@@ -36,7 +39,7 @@ public class CourseController {
 
 	@PostMapping(path = "/api/course/remove-mappings")
 	public @ResponseBody ResponseDto removeCourseMappings(@RequestBody RemoveCourseMappingsRequestDto requestDto) {
-		System.out.println("from CourseController");
+		logger.info("from CourseController");
 		ResponseDto responseDto = courseService.removeCourseMappings(requestDto);
 
 		return responseDto;

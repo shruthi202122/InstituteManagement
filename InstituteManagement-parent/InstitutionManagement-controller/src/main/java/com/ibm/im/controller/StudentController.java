@@ -1,5 +1,7 @@
 package com.ibm.im.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +19,12 @@ import com.ibm.im.dto.ResponseDto;
 public class StudentController {
 	@Autowired
 	private StudentService studentService;
+	
+	private Logger logger = LoggerFactory.getLogger(StudentController.class);
 
 	@PostMapping(path = "/api/student/create")
 	public ResponseDto createStudent(@RequestBody CreateStudentRequestDto requestDto) {
-		System.out.println("from createStudent()-Controller");
+		logger.info("from createStudent()-Controller");
 		ResponseDto responseDto = studentService.createStudent(requestDto);
 
 		return responseDto;
@@ -28,7 +32,7 @@ public class StudentController {
 
 	@PostMapping(path = "/api/student/add-courses")
 	public ResponseDto mapCourses(@RequestBody MappingStudentToCourseRequestDto requestDto) {
-		System.out.println("from mapCourses()-Controller");
+		logger.info("from mapCourses()-Controller");
 		ResponseDto responseDto = studentService.mapCourses(requestDto);
 
 		return responseDto;
@@ -36,7 +40,7 @@ public class StudentController {
 
 	@PostMapping(path = "/api/student/removefrom-course")
 	public ResponseDto removeStudentFromCourse(@RequestBody RemoveStudentFromCourseRequestDto requestDto) {
-		System.out.println("From removeStudentFromCourse()-Controller");
+		logger.info("From removeStudentFromCourse()-Controller");
 		ResponseDto responseDto = studentService.removeStudentFromCourse(requestDto);
 
 		return responseDto;
@@ -45,7 +49,7 @@ public class StudentController {
 
 	@PostMapping(path = "/api/student/remove-student")
 	public ResponseDto removeStudent(@RequestBody RemoveStudentRequestDto requestDto) {
-		System.out.println("From removeStudentFromCourse()-Controller");
+		logger.info("From removeStudentFromCourse()-Controller");
 		ResponseDto responseDto = studentService.removeStudent(requestDto);
 
 		return responseDto;
@@ -54,7 +58,7 @@ public class StudentController {
 
 	@PostMapping(path = "api/student/remove-address")
 	public ResponseDto removeAddress(@RequestBody RemoveAddressRequestDto requestDto) {
-		System.out.println("From removeAddress()-Controller");
+		logger.info("From removeAddress()-Controller");
 		ResponseDto responseDto = studentService.removeAddress(requestDto);
 
 		return responseDto;

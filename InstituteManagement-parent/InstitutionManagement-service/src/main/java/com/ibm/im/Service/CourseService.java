@@ -6,6 +6,8 @@ import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,16 +24,18 @@ import com.ibm.im.repository.StudentCourseMappingRepository;
 
 @Service
 public class CourseService {
+
+	private Logger logger= LoggerFactory.getLogger(CourseService.class);
 	@Autowired
 	private CourseRepository courseRepository;
 	@Autowired
 	private StudentCourseMappingRepository studentCourseMappingRepository;
 
 	public ResponseDto createCourse(CourseCreateRequestDto requestDto) {
-		System.out.println("from CourseService");
+		logger.info("from createCourse()-CourseService");
 		ResponseDto responseDto = new ResponseDto();
 		if (requestDto.getName() == null || requestDto.getName().trim().equals("")) {
-			System.out.println("Checking null");
+			logger.info("Checking null");
 			throw new BadRequestException("Trying to insert Null values");
 
 		}
@@ -56,20 +60,20 @@ public class CourseService {
 	}
 
 	public ResponseDto updateCourse(@RequestBody UpdateCourseRequestDto requestDto) {
-		System.out.println("from CourseService");
+		logger.info("from CourseService");
 		ResponseDto responseDto = new ResponseDto();
 		Integer courseId = requestDto.getCourseId();
 		Integer duration = requestDto.getDurationDays();
 		if ((courseId == null) || (duration == null)) {
-			System.out.println("Checking null");
+			logger.info("Checking null");
 			throw new BadRequestException("Trying to update course with null values");
 		}
 		Optional<CourseEntity> optional = courseRepository.findById(courseId);
 		if (optional.isEmpty()) {
-			System.out.println("Checking whether course is existing or not ");
+			logger.info("Checking whether course is existing or not ");
 			throw new BadRequestException("course not exist");
 		}
-		System.out.println("Updating started");
+		logger.info("Updating started");
 		CourseEntity courseEntity = optional.get();
 		courseEntity.setDurationDays(duration);
 		courseRepository.save(courseEntity);
@@ -79,14 +83,14 @@ public class CourseService {
 
 	public ResponseDto removeCourseMappings(RemoveCourseMappingsRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
-		System.out.println("From removeCourseMappings()-Service");
+		logger.info("From removeCourseMappings()-Service");
 		
 		List<StudentCourseMappingEntity> studentCourseMappingEntities = studentCourseMappingRepository
 				.findAllByCourseEntityId(requestDto.getCourseId());
 		if(studentCourseMappingEntities.isEmpty()) {
 			throw new BadRequestException("No mappings found with specified courseId");
 		}
-		System.out.println("ready to delete data from db");
+		logger.info("ready to delete data from db");
 
 		studentCourseMappingRepository.deleteInBatch(studentCourseMappingEntities);
 		
