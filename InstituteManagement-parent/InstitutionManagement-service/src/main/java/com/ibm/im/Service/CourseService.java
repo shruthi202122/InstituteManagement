@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import javax.ws.rs.BadRequestException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,9 +32,8 @@ public class CourseService {
 		ResponseDto responseDto = new ResponseDto();
 		if (requestDto.getName() == null || requestDto.getName().trim().equals("")) {
 			System.out.println("Checking null");
-			responseDto.setCode(400);
-			responseDto.setUserMessage("Invaild data recieved");
-			return responseDto;
+			throw new BadRequestException("Trying to insert Null values");
+
 		}
 		System.out.println("searching for course name");
 		// CourseEntity entity = courseDao.findById(requestDto.getId());
@@ -41,9 +42,7 @@ public class CourseService {
 		if (optional.isPresent()) {
 			// courseEntity=optional.get();
 			System.out.println("validation for course is already exist");
-			responseDto.setCode(400);
-			responseDto.setUserMessage("course already exist");
-			return responseDto;
+			throw new BadRequestException("course already exist");
 		}
 
 		CourseEntity courseEntity = new CourseEntity();
@@ -52,7 +51,6 @@ public class CourseService {
 		// courseDao.save(courseEntity);
 		System.out.println("inserting course");
 		courseRepository.save(courseEntity);
-		responseDto.setCode(200);
 		responseDto.setUserMessage("course created successfully");
 		return responseDto;
 	}
@@ -64,22 +62,17 @@ public class CourseService {
 		Integer duration = requestDto.getDurationDays();
 		if ((courseId == null) || (duration == null)) {
 			System.out.println("Checking null");
-			responseDto.setCode(400);
-			responseDto.setUserMessage("Trying to update course with null values");
-			return responseDto;
+			throw new BadRequestException("Trying to update course with null values");
 		}
 		Optional<CourseEntity> optional = courseRepository.findById(courseId);
 		if (optional.isEmpty()) {
 			System.out.println("Checking whether course is existing or not ");
-			responseDto.setCode(400);
-			responseDto.setUserMessage("course is not exist");
-			return responseDto;
+			throw new BadRequestException("course not exist");
 		}
 		System.out.println("Updating started");
 		CourseEntity courseEntity = optional.get();
 		courseEntity.setDurationDays(duration);
 		courseRepository.save(courseEntity);
-		responseDto.setCode(200);
 		responseDto.setUserMessage("course Updated Successfully");
 		return responseDto;
 	}
@@ -91,15 +84,12 @@ public class CourseService {
 		List<StudentCourseMappingEntity> studentCourseMappingEntities = studentCourseMappingRepository
 				.findAllByCourseEntityId(requestDto.getCourseId());
 		if(studentCourseMappingEntities.isEmpty()) {
-			responseDto.setCode(400);
-			responseDto.setUserMessage("No mappings found with specified courseId");
-			return responseDto;
+			throw new BadRequestException("No mappings found with specified courseId");
 		}
 		System.out.println("ready to delete data from db");
 
 		studentCourseMappingRepository.deleteInBatch(studentCourseMappingEntities);
 		
-		responseDto.setCode(200);
 		responseDto.setUserMessage("Coursemappings are deleted with specified data");
 		return responseDto;
 	}

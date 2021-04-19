@@ -20,50 +20,25 @@ public class CourseController {
 
 	@PostMapping(path = "/api/course/create")
 	public @ResponseBody ResponseDto createCourse(@RequestBody CourseCreateRequestDto requestDto) {
-		System.out.println("from CourseController");
-		ResponseDto responseDto;
-		try {
-
-			responseDto = courseService.createCourse(requestDto);
-
-		} catch (Exception e) {
-
-			e.printStackTrace();
-			responseDto = new ResponseDto();
-			responseDto.setCode(500);
-			responseDto.setUserMessage("sorry something went wrong");
-		}
+		System.out.println("from createCourse()-Controller");
+		ResponseDto responseDto = courseService.createCourse(requestDto);
 
 		return responseDto;
 	}
 
 	@PostMapping(path = "/api/course/update")
 	public @ResponseBody ResponseDto updateCourse(@RequestBody UpdateCourseRequestDto requestDto) {
-		System.out.println("from CourseController");
-		ResponseDto responseDto;
-		try {
-			responseDto = courseService.updateCourse(requestDto);
-		} catch (Exception e) {
-			e.printStackTrace();
-			responseDto = new ResponseDto();
-			responseDto.setCode(500);
-			responseDto.setUserMessage("sorry something went wrong");
-		}
+		System.out.println("from updateCourse()-Controller");
+		ResponseDto responseDto = courseService.updateCourse(requestDto);
+
 		return responseDto;
 	}
 
 	@PostMapping(path = "/api/course/remove-mappings")
 	public @ResponseBody ResponseDto removeCourseMappings(@RequestBody RemoveCourseMappingsRequestDto requestDto) {
 		System.out.println("from CourseController");
-		ResponseDto responseDto;
-		try {
-			responseDto = courseService.removeCourseMappings(requestDto);
-		} catch (Exception e) {
-			e.printStackTrace();
-			responseDto = new ResponseDto();
-			responseDto.setCode(500);
-			responseDto.setUserMessage("sorry something went wrong");
-		}
+		ResponseDto responseDto = courseService.removeCourseMappings(requestDto);
+
 		return responseDto;
 	}
 
