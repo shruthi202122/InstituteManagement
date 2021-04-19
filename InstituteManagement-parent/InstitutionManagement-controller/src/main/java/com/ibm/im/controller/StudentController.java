@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ibm.im.Service.StudentService;
 import com.ibm.im.dto.CreateStudentRequestDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
+import com.ibm.im.dto.RemoveAddressRequestDto;
 import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
 import com.ibm.im.dto.RemoveStudentRequestDto;
 import com.ibm.im.dto.ResponseDto;
@@ -33,7 +34,7 @@ public class StudentController {
 		return responseDto;
 	}
 
-	@PostMapping(path = "/api/student/add_courses")
+	@PostMapping(path = "/api/student/add-courses")
 	public ResponseDto mapCourses(@RequestBody MappingStudentToCourseRequestDto requestDto) {
 		System.out.println("from Controller");
 		ResponseDto responseDto;
@@ -50,7 +51,7 @@ public class StudentController {
 		return responseDto;
 	}
 
-	@PostMapping(path = "/api/student/removefromcourse")
+	@PostMapping(path = "/api/student/removefrom-course")
 	public ResponseDto removeStudentFromCourse(@RequestBody RemoveStudentFromCourseRequestDto requestDto) {
 		System.out.println("From removeStudentFromCourse()-Controller");
 		ResponseDto responseDto;
@@ -67,7 +68,7 @@ public class StudentController {
 
 	}
 
-	@PostMapping(path = "/api/student/removestudent")
+	@PostMapping(path = "/api/student/remove-student")
 	public ResponseDto removeStudent(@RequestBody RemoveStudentRequestDto requestDto) {
 		System.out.println("From removeStudentFromCourse()-Controller");
 		ResponseDto responseDto;
@@ -82,5 +83,21 @@ public class StudentController {
 
 		return responseDto;
 
+	}
+	@PostMapping(path = "api/student/remove-address")
+	public ResponseDto removeAddress(@RequestBody RemoveAddressRequestDto requestDto) {
+		System.out.println("From removeStudentFromCourse()-Controller");
+		ResponseDto responseDto;
+		try {
+			responseDto = studentService.removeAddress(requestDto);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseDto = new ResponseDto();
+			responseDto.setCode(500);
+			responseDto.setUserMessage("Something went wrong");
+		}
+
+		return responseDto;
+		
 	}
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.ibm.im.dto.CreateStudentAddressRequestDto;
 import com.ibm.im.dto.CreateStudentRequestDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
+import com.ibm.im.dto.RemoveAddressRequestDto;
 import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
 import com.ibm.im.dto.RemoveStudentRequestDto;
 import com.ibm.im.dto.ResponseDto;
@@ -126,7 +127,7 @@ public class StudentService {
 		ResponseDto responseDto = new ResponseDto();
 		Optional<StudentCourseMappingEntity> mappingEntity = studentCourseMappingRepository
 				.findByStudentEntityIdAndCourseEntityId(requestDto.getStudentId(), requestDto.getCourseId());
-		if(mappingEntity.isEmpty()) {
+		if (mappingEntity.isEmpty()) {
 			responseDto.setCode(400);
 			responseDto.setUserMessage("No such data is present with specified data");
 			return responseDto;
@@ -144,17 +145,73 @@ public class StudentService {
 	public ResponseDto removeStudent(RemoveStudentRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
 		Optional<StudentEntity> id = studentRepository.findById(requestDto.getStudentId());
-		if(id.isEmpty()) {
+		if (id.isEmpty()) {
 			responseDto.setCode(400);
 			responseDto.setUserMessage("student not Found with specified id");
 			return responseDto;
 		}
 		StudentEntity studentEntity = id.get();
 		studentRepository.delete(studentEntity);
-		
+
 		responseDto.setCode(200);
 		responseDto.setUserMessage("StudentCourse mapping is deleted with specified data");
 
+		return responseDto;
+
+	}
+
+	public ResponseDto removeAddress(RemoveAddressRequestDto requestDto) {
+		ResponseDto responseDto = new ResponseDto();
+		if (requestDto.getStudentId() == null || requestDto.getAddressId() == null) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("Bad request");
+			return responseDto;
+		}
+
+		/*
+		 * Optional<AddressEntity> addressOptional =
+		 * addressRepository.findById(requestDto.getAddressId());
+		 * if(addressOptional.isEmpty()) { responseDto.setCode(400);
+		 * responseDto.setUserMessage("Address not Found with specified id"); return
+		 * responseDto; } 
+		 * AddressEntity addressEntity = addressOptional.get();
+		 * StudentEntity studentEntity = addressEntity.getStudentEntity(); 
+		 * Integer studentId = studentEntity.getId();
+		 * if(studentId.equals(requestDto.getStudentId())) {
+		 * addressRepository.delete(addressEntity); responseDto.setCode(200);
+		 * responseDto.setUserMessage("Address deleted successfully"); }
+		 */
+		Optional<StudentEntity> studentOptional = studentRepository.findById(requestDto.getStudentId());
+		if(studentOptional.isEmpty()) {
+			responseDto.setCode(400);
+			responseDto.setUserMessage("Student is not found with specified id");
+			return responseDto;
+		}
+		StudentEntity studentEntity = studentOptional.get();
+		
+		List<AddressEntity> addressEntities = studentEntity.getAddressEntities();
+		/*AddressEntity deleteAddressEntity = null;
+		for (AddressEntity addressEntity : addressEntities) {
+			if (requestDto.getAddressId().equals(addressEntity.getId())) {
+				deleteAddressEntity = addressEntity;
+				break;
+			}
+			
+		}*/
+		Optional<AddressEntity> optional = addressEntities.stream().filter(address -> requestDto.getAddressId().equals(address.getId())).findFirst();
+		
+		if(optional.isPresent()) {
+			System.out.println("address is present");
+			addressEntities.remove(optional.get());
+			studentRepository.save(studentEntity);
+			//addressRepository.delete(optional.get());
+			responseDto.setCode(200);
+			responseDto.setUserMessage("Address is deleted successfully");
+			return responseDto;
+		}
+		
+		responseDto.setCode(400);
+		responseDto.setUserMessage("Address is not found");
 		return responseDto;
 
 	}

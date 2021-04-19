@@ -52,7 +52,7 @@ public class CourseController {
 		return responseDto;
 	}
 
-	@PostMapping(path = "/api/course/removemappings")
+	@PostMapping(path = "/api/course/remove-mappings")
 	public @ResponseBody ResponseDto removeCourseMappings(@RequestBody RemoveCourseMappingsRequestDto requestDto) {
 		System.out.println("from CourseController");
 		ResponseDto responseDto;
