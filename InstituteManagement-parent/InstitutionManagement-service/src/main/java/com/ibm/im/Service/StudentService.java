@@ -3,6 +3,7 @@ package com.ibm.im.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -10,8 +11,11 @@ import javax.ws.rs.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ibm.im.dto.AddressDto;
+import com.ibm.im.dto.CourseDto;
 import com.ibm.im.dto.CreateStudentAddressRequestDto;
 import com.ibm.im.dto.CreateStudentRequestDto;
+import com.ibm.im.dto.GetStudentResponseDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
 import com.ibm.im.dto.RemoveAddressRequestDto;
 import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
@@ -206,5 +210,32 @@ public class StudentService {
 
 		throw new NotFoundException("Address not found");
 
+	}
+	public GetStudentResponseDto getStudent(Integer studentId) {
+		log.info("inside getStudent()-StudentService");
+		Optional<StudentEntity> optional = studentRepository.findById(studentId);
+		StudentEntity studentEntity = optional.get();
+		List<AddressDto> AddressDtoList = studentEntity.getAddressEntities().stream().map(ae ->{
+			AddressDto addressDto = new AddressDto();
+			addressDto.setStreet(ae.getStreet());
+			addressDto.setCity(ae.getCity());
+			addressDto.setState(ae.getState());
+			addressDto.setType(ae.getType());
+			return addressDto;
+		}).collect(Collectors.toList());
+		List<CourseDto> courseDtoList = studentEntity.getMappingEntities().stream().map(sce -> sce.getCourseEntity()).map(ce -> {
+			CourseDto courseDto = new CourseDto();
+			courseDto.setName(ce.getName());
+			courseDto.setDurationDays(ce.getDurationDays());
+			return courseDto;
+		}).collect(Collectors.toList());
+		GetStudentResponseDto responseDto = new GetStudentResponseDto();
+		responseDto.setStudentName(studentEntity.getName());
+		responseDto.setAadharNo(studentEntity.getAadharNo());
+		responseDto.setAddressDtoList(AddressDtoList);
+		responseDto.setCourseDtoList(courseDtoList);
+		
+		return responseDto;
+		
 	}
 }

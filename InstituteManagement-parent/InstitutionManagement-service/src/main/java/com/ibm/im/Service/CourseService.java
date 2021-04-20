@@ -2,6 +2,7 @@ package com.ibm.im.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -14,6 +15,7 @@ import com.ibm.im.dto.CourseCreateRequestDto;
 import com.ibm.im.dto.GetCourseResponseDto;
 import com.ibm.im.dto.RemoveCourseMappingsRequestDto;
 import com.ibm.im.dto.ResponseDto;
+import com.ibm.im.dto.StudentDto2;
 import com.ibm.im.dto.UpdateCourseRequestDto;
 import com.ibm.im.entity.CourseEntity;
 import com.ibm.im.entity.StudentCourseMappingEntity;
@@ -106,10 +108,19 @@ public class CourseService {
 			throw new NotFoundException("course id is not exist with specified id");
 		}
 		CourseEntity courseEntity = optional.get();
+		List<StudentDto2> studentDtoList = courseEntity.getStudentCourseMappingEntities().stream()
+				.map(scme -> scme.getStudentEntity()).map(se -> {
+					StudentDto2 studentDto2 = new StudentDto2();
+					studentDto2.setName(se.getName());
+					studentDto2.setAadharNo(se.getAadharNo());
+					return studentDto2;
+				}).collect(Collectors.toList());
 
 		GetCourseResponseDto responseDto = new GetCourseResponseDto();
 		responseDto.setCourseName(courseEntity.getName());
 		responseDto.setDurationDays(courseEntity.getDurationDays());
+		responseDto.setStudentDtoList(studentDtoList);
+
 		return responseDto;
 
 	}

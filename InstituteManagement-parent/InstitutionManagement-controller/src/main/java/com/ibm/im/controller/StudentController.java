@@ -1,12 +1,15 @@
 package com.ibm.im.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.im.Service.StudentService;
 import com.ibm.im.dto.CreateStudentRequestDto;
+import com.ibm.im.dto.GetStudentResponseDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
 import com.ibm.im.dto.RemoveAddressRequestDto;
 import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
@@ -57,7 +60,7 @@ public class StudentController {
 
 	}
 
-	@PostMapping(path = "api/student/remove-address")
+	@PostMapping(path = "/api/student/remove-address")
 	public ResponseDto removeAddress(@RequestBody RemoveAddressRequestDto requestDto) {
 		log.info("From removeAddress()-Controller");
 		ResponseDto responseDto = studentService.removeAddress(requestDto);
@@ -65,5 +68,15 @@ public class StudentController {
 		return responseDto;
 
 	}
+	
+	@GetMapping(path="/api/student/get")
+	public GetStudentResponseDto getStudent(@RequestParam Integer studentId) {
+		log.info("inside getStudent()-Controller");
+		GetStudentResponseDto responseDto = studentService.getStudent(studentId);
+		
+		return responseDto;
+		
+	}
 
 }
+
