@@ -1,7 +1,10 @@
 package com.ibm.im.controller;
 
+import javax.ws.rs.PathParam;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,8 +72,8 @@ public class StudentController {
 
 	}
 	
-	@GetMapping(path="/api/student/get")
-	public GetStudentResponseDto getStudent(@RequestParam Integer studentId) {
+	@GetMapping(path="/api/student/get/{studentId}")
+	public GetStudentResponseDto getStudent(@PathVariable(name = "studentId") Integer studentId) {
 		log.info("inside getStudent()-Controller");
 		GetStudentResponseDto responseDto = studentService.getStudent(studentId);
 		
