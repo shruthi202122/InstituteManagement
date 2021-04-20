@@ -1,19 +1,12 @@
 package com.ibm.im.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class RemoveStudentFromCourseRequestDto {
 	private Integer studentId;
 	private Integer courseId;
-	public Integer getStudentId() {
-		return studentId; 
-	}
-	public void setStudentId(Integer studentId) {
-		this.studentId = studentId;
-	}
-	public Integer getCourseId() {
-		return courseId;
-	}
-	public void setCourseId(Integer courseId) {
-		this.courseId = courseId;
-	}
 	
 }

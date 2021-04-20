@@ -1,17 +1,15 @@
 package com.ibm.im.Service;
 
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.ibm.im.dto.CreateStudentAddressRequestDto;
 import com.ibm.im.dto.CreateStudentRequestDto;
 import com.ibm.im.dto.MappingStudentToCourseRequestDto;
@@ -28,9 +26,11 @@ import com.ibm.im.repository.CourseRepository;
 import com.ibm.im.repository.StudentCourseMappingRepository;
 import com.ibm.im.repository.StudentRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class StudentService {
-	private Logger logger = LoggerFactory.getLogger(StudentService.class);
 
 	@Autowired
 	private StudentRepository studentRepository;
@@ -42,9 +42,10 @@ public class StudentService {
 	private AddressRepository addressRepository;
 
 	public ResponseDto createStudent(CreateStudentRequestDto requestDto) {
-		logger.info("from createStudent()-service ");
+		log.info("from createStudent()-service ");
 		ResponseDto responseDto = new ResponseDto();
-		if (requestDto.getAadharNo()==null||requestDto.getName() == null || requestDto.getName().trim().equals("")) {
+		if (requestDto.getAadharNo() == null || requestDto.getName() == null
+				|| requestDto.getName().trim().equals("")) {
 			throw new BadRequestException("Trying to insert Null values");
 		}
 
@@ -63,13 +64,13 @@ public class StudentService {
 			addressEntity.setState(createStudentAddressRequestDto.getState());
 			addressEntity.setType(createStudentAddressRequestDto.getType());
 			addressEntity.setStudentEntity(studentEntity);
-			logger.info("adding Address to addressEntityList");
+			log.info("adding Address to addressEntityList");
 			addressEntitiesList.add(addressEntity);
 		}
 
 		studentEntity.setAddressEntities(addressEntitiesList);
-		
-		logger.info("inserting student");
+
+		log.info("inserting student");
 		studentRepository.save(studentEntity);
 
 		responseDto.setUserMessage("Student Inserted Successfully");
@@ -79,7 +80,7 @@ public class StudentService {
 	}
 
 	public ResponseDto mapCourses(MappingStudentToCourseRequestDto requestDto) {
-		logger.info("from mapCourse()-service");
+		log.info("from mapCourse()-service");
 		ResponseDto responseDto = new ResponseDto();
 		if (requestDto.getStudentId() == null || requestDto.getCourseIdList() == null
 				|| requestDto.getCourseIdList().isEmpty()) {
@@ -102,7 +103,7 @@ public class StudentService {
 
 		List<CourseEntity> courseIdList = courseRepository.findAllById(requestDto.getCourseIdList());
 		List<StudentCourseMappingEntity> mappingEntityList = new ArrayList<>();
-		logger.info("mapping started");
+		log.info("mapping started");
 		// int i=60;
 		for (CourseEntity courseEntity : courseIdList) {
 
@@ -113,7 +114,7 @@ public class StudentService {
 			mappingEntityList.add(mappingEntity);
 			// i++;
 		}
-		logger.info("mapping ended");
+		log.info("mapping ended");
 		studentCourseMappingRepository.saveAll(mappingEntityList);
 
 		responseDto.setUserMessage("Student mapped with Courses");
@@ -123,7 +124,7 @@ public class StudentService {
 	}
 
 	public ResponseDto removeStudentFromCourse(RemoveStudentFromCourseRequestDto requestDto) {
-		logger.info("From removeStudentFromCourse()-Service");
+		log.info("From removeStudentFromCourse()-Service");
 		ResponseDto responseDto = new ResponseDto();
 		Optional<StudentCourseMappingEntity> mappingEntity = studentCourseMappingRepository
 				.findByStudentEntityIdAndCourseEntityId(requestDto.getStudentId(), requestDto.getCourseId());
@@ -131,8 +132,8 @@ public class StudentService {
 			throw new NotFoundException("No such data is present with specified data");
 		}
 		StudentCourseMappingEntity studentCourseMappingEntity = mappingEntity.get();
-		
-		logger.info("ready to delete data from db");
+
+		log.info("ready to delete data from db");
 		studentCourseMappingRepository.delete(studentCourseMappingEntity);
 		responseDto.setUserMessage("StudentCourse mapping is deleted with specified data");
 
@@ -140,14 +141,14 @@ public class StudentService {
 	}
 
 	public ResponseDto removeStudent(RemoveStudentRequestDto requestDto) {
-		logger.info("from removeStudent()-service ");
+		log.info("from removeStudent()-service ");
 		ResponseDto responseDto = new ResponseDto();
 		Optional<StudentEntity> id = studentRepository.findById(requestDto.getStudentId());
 		if (id.isEmpty()) {
 			throw new NotFoundException("Student is not found with specified id");
 		}
 		StudentEntity studentEntity = id.get();
-		logger.info("ready to delete data from db");
+		log.info("ready to delete data from db");
 
 		studentRepository.delete(studentEntity);
 
@@ -158,7 +159,7 @@ public class StudentService {
 	}
 
 	public ResponseDto removeAddress(RemoveAddressRequestDto requestDto) {
-		logger.info("from createAddress()-service ");
+		log.info("from createAddress()-service ");
 		ResponseDto responseDto = new ResponseDto();
 		if (requestDto.getStudentId() == null || requestDto.getAddressId() == null) {
 			throw new BadRequestException("Student_Id or Address_Id must not be null");
@@ -169,40 +170,40 @@ public class StudentService {
 		 * addressRepository.findById(requestDto.getAddressId());
 		 * if(addressOptional.isEmpty()) { responseDto.setCode(400);
 		 * responseDto.setUserMessage("Address not Found with specified id"); return
-		 * responseDto; } 
-		 * AddressEntity addressEntity = addressOptional.get();
-		 * StudentEntity studentEntity = addressEntity.getStudentEntity(); 
-		 * Integer studentId = studentEntity.getId();
+		 * responseDto; } AddressEntity addressEntity = addressOptional.get();
+		 * StudentEntity studentEntity = addressEntity.getStudentEntity(); Integer
+		 * studentId = studentEntity.getId();
 		 * if(studentId.equals(requestDto.getStudentId())) {
 		 * addressRepository.delete(addressEntity); responseDto.setCode(200);
 		 * responseDto.setUserMessage("Address deleted successfully"); }
 		 */
 		Optional<StudentEntity> studentOptional = studentRepository.findById(requestDto.getStudentId());
-		if(studentOptional.isEmpty()) {
+		if (studentOptional.isEmpty()) {
 			throw new NotFoundException("Student is not found with specified id");
 		}
 		StudentEntity studentEntity = studentOptional.get();
-		
+
 		List<AddressEntity> addressEntities = studentEntity.getAddressEntities();
-		/*AddressEntity deleteAddressEntity = null;
-		for (AddressEntity addressEntity : addressEntities) {
-			if (requestDto.getAddressId().equals(addressEntity.getId())) {
-				deleteAddressEntity = addressEntity;
-				break;
-			}
-			
-		}*/
-		Optional<AddressEntity> optional = addressEntities.stream().filter(address -> requestDto.getAddressId().equals(address.getId())).findFirst();
-		
-		if(optional.isPresent()) {
-			logger.info("address is present");
+		/*
+		 * AddressEntity deleteAddressEntity = null; for (AddressEntity addressEntity :
+		 * addressEntities) { if
+		 * (requestDto.getAddressId().equals(addressEntity.getId())) {
+		 * deleteAddressEntity = addressEntity; break; }
+		 * 
+		 * }
+		 */
+		Optional<AddressEntity> optional = addressEntities.stream()
+				.filter(address -> requestDto.getAddressId().equals(address.getId())).findFirst();
+
+		if (optional.isPresent()) {
+			log.info("address is present");
 			addressEntities.remove(optional.get());
 			studentRepository.save(studentEntity);
-			//addressRepository.delete(optional.get());
+			// addressRepository.delete(optional.get());
 			responseDto.setUserMessage("Address is deleted successfully");
 			return responseDto;
 		}
-		
+
 		throw new NotFoundException("Address not found");
 
 	}

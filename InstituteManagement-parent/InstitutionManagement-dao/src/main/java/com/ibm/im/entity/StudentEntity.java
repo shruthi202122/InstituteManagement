@@ -12,7 +12,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
+@Setter
+@Getter
 @Table(name = "Student")
 public class StudentEntity {
 	@Id
@@ -29,44 +34,5 @@ public class StudentEntity {
 	@OneToMany(mappedBy = "studentEntity", cascade = { CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REMOVE },orphanRemoval = true)
 	private List<AddressEntity> addressEntities;
 
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<StudentCourseMappingEntity> getMappingEntities() {
-		return mappingEntities;
-	}
-
-	public void setMappingEntities(List<StudentCourseMappingEntity> mappingEntities) {
-		this.mappingEntities = mappingEntities;
-	}
-
-	public List<AddressEntity> getAddressEntities() {
-		return addressEntities;
-	}
-
-	public void setAddressEntities(List<AddressEntity> addressEntities) {
-		this.addressEntities = addressEntities;
-	}
-
-	public Integer getAadharNo() {
-		return aadharNo;
-	}
-
-	public void setAadharNo(Integer aadharNo) {
-		this.aadharNo = aadharNo;
-	}
-
+	
 }

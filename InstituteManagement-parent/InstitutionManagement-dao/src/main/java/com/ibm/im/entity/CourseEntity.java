@@ -10,7 +10,12 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
+@Setter
+@Getter
 @Table(name = "Course")
 public class CourseEntity {
 	@Id
@@ -25,37 +30,5 @@ public class CourseEntity {
 
 	@OneToMany(mappedBy = "courseEntity")
 	private List<StudentCourseMappingEntity> studentCourseMappingEntities;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public List<StudentCourseMappingEntity> getStudentCourseMappingEntities() {
-		return studentCourseMappingEntities;
-	}
-
-	public void setStudentCourseMappingEntities(List<StudentCourseMappingEntity> studentCourseMappingEntities) {
-		this.studentCourseMappingEntities = studentCourseMappingEntities;
-	}
-
-	public Integer getDurationDays() {
-		return durationDays;
-	}
-
-	public void setDurationDays(Integer durationDays) {
-		this.durationDays = durationDays;
-	}
 
 }

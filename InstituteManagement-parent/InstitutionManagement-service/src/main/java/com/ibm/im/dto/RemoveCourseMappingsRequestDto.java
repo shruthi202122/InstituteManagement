@@ -1,14 +1,11 @@
 package com.ibm.im.dto;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class RemoveCourseMappingsRequestDto {
 	private Integer courseId;
 
-	public Integer getCourseId() {
-		return courseId;
-	}
-
-	public void setCourseId(Integer courseId) {
-		this.courseId = courseId;
-	}
-	
 }

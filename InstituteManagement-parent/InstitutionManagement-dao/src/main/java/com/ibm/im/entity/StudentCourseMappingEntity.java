@@ -10,7 +10,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
+@Setter
+@Getter
 @Table(name = "Student_Course_Mapping",uniqueConstraints = @UniqueConstraint(columnNames = {"student_id","course_id"},name = "UK_STUDENT_COURSE"))
 public class StudentCourseMappingEntity {
 	@Id
@@ -23,32 +28,5 @@ public class StudentCourseMappingEntity {
 	@ManyToOne
 	@JoinColumn(name = "course_id",foreignKey = @ForeignKey(name = "FK_MAPPING_2_COURSE"))
 	private CourseEntity courseEntity;
-
-	
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public StudentEntity getStudentEntity() {
-		return studentEntity;
-	}
-
-	public void setStudentEntity(StudentEntity studentEntity) {
-		this.studentEntity = studentEntity;
-	}
-
-	public CourseEntity getCourseEntity() {
-		return courseEntity;
-	}
-
-	public void setCourseEntity(CourseEntity courseEntity) {
-		this.courseEntity = courseEntity;
-	}
-	
 	
 }

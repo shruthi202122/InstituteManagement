@@ -1,13 +1,10 @@
 package com.ibm.im.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,34 +15,35 @@ import com.ibm.im.dto.ResponseDto;
 import com.ibm.im.dto.UpdateCourseRequestDto;
 import com.ibm.im.entity.CourseEntity;
 import com.ibm.im.entity.StudentCourseMappingEntity;
-import com.ibm.im.entity.StudentEntity;
 import com.ibm.im.repository.CourseRepository;
 import com.ibm.im.repository.StudentCourseMappingRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class CourseService {
 
-	private Logger logger= LoggerFactory.getLogger(CourseService.class);
 	@Autowired
 	private CourseRepository courseRepository;
 	@Autowired
 	private StudentCourseMappingRepository studentCourseMappingRepository;
 
 	public ResponseDto createCourse(CourseCreateRequestDto requestDto) {
-		logger.info("from createCourse()-CourseService");
+		log.info("from createCourse()-CourseService");
 		ResponseDto responseDto = new ResponseDto();
 		if (requestDto.getName() == null || requestDto.getName().trim().equals("")) {
-			logger.info("Checking null");
+			log.info("Checking null");
 			throw new BadRequestException("Trying to insert Null values");
 
 		}
-		System.out.println("searching for course name");
+		log.info("searching for course name");
 		// CourseEntity entity = courseDao.findById(requestDto.getId());
 		Optional<CourseEntity> optional = courseRepository.findByName(requestDto.getName());
 
 		if (optional.isPresent()) {
 			// courseEntity=optional.get();
-			System.out.println("validation for course is already exist");
+			log.info("validation for course is already exist");
 			throw new BadRequestException("course already exist");
 		}
 
@@ -53,27 +51,27 @@ public class CourseService {
 		courseEntity.setName(requestDto.getName());
 		courseEntity.setDurationDays(requestDto.getDurationDays());
 		// courseDao.save(courseEntity);
-		System.out.println("inserting course");
+		log.info("inserting course into db");
 		courseRepository.save(courseEntity);
 		responseDto.setUserMessage("course created successfully");
 		return responseDto;
 	}
 
 	public ResponseDto updateCourse(@RequestBody UpdateCourseRequestDto requestDto) {
-		logger.info("from CourseService");
+		log.info("from CourseService");
 		ResponseDto responseDto = new ResponseDto();
 		Integer courseId = requestDto.getCourseId();
 		Integer duration = requestDto.getDurationDays();
 		if ((courseId == null) || (duration == null)) {
-			logger.info("Checking null");
+			log.info("Checking null");
 			throw new BadRequestException("Trying to update course with null values");
 		}
 		Optional<CourseEntity> optional = courseRepository.findById(courseId);
 		if (optional.isEmpty()) {
-			logger.info("Checking whether course is existing or not ");
+			log.info("Checking whether course is existing or not ");
 			throw new BadRequestException("course not exist");
 		}
-		logger.info("Updating started");
+		log.info("Updating started");
 		CourseEntity courseEntity = optional.get();
 		courseEntity.setDurationDays(duration);
 		courseRepository.save(courseEntity);
@@ -83,17 +81,17 @@ public class CourseService {
 
 	public ResponseDto removeCourseMappings(RemoveCourseMappingsRequestDto requestDto) {
 		ResponseDto responseDto = new ResponseDto();
-		logger.info("From removeCourseMappings()-Service");
-		
+		log.info("From removeCourseMappings()-Service");
+
 		List<StudentCourseMappingEntity> studentCourseMappingEntities = studentCourseMappingRepository
 				.findAllByCourseEntityId(requestDto.getCourseId());
-		if(studentCourseMappingEntities.isEmpty()) {
+		if (studentCourseMappingEntities.isEmpty()) {
 			throw new BadRequestException("No mappings found with specified courseId");
 		}
-		logger.info("ready to delete data from db");
+		log.info("ready to delete data from db");
 
 		studentCourseMappingRepository.deleteInBatch(studentCourseMappingEntities);
-		
+
 		responseDto.setUserMessage("Coursemappings are deleted with specified data");
 		return responseDto;
 	}

@@ -10,7 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.Getter;
+import lombok.Setter;
+
 @Entity
+@Setter
+@Getter
 @Table(name = "Address")
 public class AddressEntity {
 	@Id
@@ -32,53 +37,5 @@ public class AddressEntity {
 	@ManyToOne
 	@JoinColumn(name = "student_id", foreignKey = @ForeignKey(name = "FK_ADDRESS_2_STUDENT"), nullable = false)
 	private StudentEntity studentEntity;
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getStreet() {
-		return street;
-	}
-
-	public void setStreet(String street) {
-		this.street = street;
-	}
-
-	public String getCity() {
-		return city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getState() {
-		return state;
-	}
-
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public StudentEntity getStudentEntity() {
-		return studentEntity;
-	}
-
-	public void setStudentEntity(StudentEntity studentEntity) {
-		this.studentEntity = studentEntity;
-	}
 
 }
