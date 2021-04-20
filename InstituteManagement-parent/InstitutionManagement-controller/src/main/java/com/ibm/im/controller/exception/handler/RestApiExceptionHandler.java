@@ -19,7 +19,7 @@ public class RestApiExceptionHandler {
 		System.out.println("inside exceptionHandler");
 		e.printStackTrace();
 		ResponseDto responseDto = new ResponseDto();
-		responseDto.setUserMessage(e.getMessage());
+		responseDto.setUserMessage("Something went wrong");
 		ResponseEntity<ResponseDto> responseEntity = new ResponseEntity<>(responseDto, HttpStatus.INTERNAL_SERVER_ERROR);
 		return responseEntity;	
 	}

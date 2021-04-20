@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.NotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.ibm.im.dto.CourseCreateRequestDto;
+import com.ibm.im.dto.GetCourseResponseDto;
 import com.ibm.im.dto.RemoveCourseMappingsRequestDto;
 import com.ibm.im.dto.ResponseDto;
 import com.ibm.im.dto.UpdateCourseRequestDto;
@@ -94,6 +96,22 @@ public class CourseService {
 
 		responseDto.setUserMessage("Coursemappings are deleted with specified data");
 		return responseDto;
+	}
+
+	public GetCourseResponseDto getCourse(Integer courseId) {
+		log.info("inside getCourse()-CourseController");
+
+		Optional<CourseEntity> optional = courseRepository.findById(courseId);
+		if (optional.isEmpty()) {
+			throw new NotFoundException("course id is not exist with specified id");
+		}
+		CourseEntity courseEntity = optional.get();
+
+		GetCourseResponseDto responseDto = new GetCourseResponseDto();
+		responseDto.setCourseName(courseEntity.getName());
+		responseDto.setDurationDays(courseEntity.getDurationDays());
+		return responseDto;
+
 	}
 
 }

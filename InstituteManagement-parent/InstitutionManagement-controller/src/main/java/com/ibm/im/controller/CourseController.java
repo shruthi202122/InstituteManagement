@@ -1,13 +1,16 @@
 package com.ibm.im.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.im.Service.CourseService;
 import com.ibm.im.dto.CourseCreateRequestDto;
+import com.ibm.im.dto.GetCourseResponseDto;
 import com.ibm.im.dto.RemoveCourseMappingsRequestDto;
 import com.ibm.im.dto.ResponseDto;
 import com.ibm.im.dto.UpdateCourseRequestDto;
@@ -45,6 +48,15 @@ public class CourseController {
 		ResponseDto responseDto = courseService.removeCourseMappings(requestDto);
 
 		return responseDto;
+	}
+
+	@GetMapping(path = "api/course/get")
+	public @ResponseBody GetCourseResponseDto getCourse(@RequestParam Integer courseId) {
+		log.info("inside getCourse()-CourseController");
+		log.info("received corseId={}", courseId);
+		GetCourseResponseDto requestDto = courseService.getCourse(courseId);
+		return requestDto;
+
 	}
 
 }
