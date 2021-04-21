@@ -21,6 +21,8 @@ import com.ibm.im.dto.RemoveAddressRequestDto;
 import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
 import com.ibm.im.dto.RemoveStudentRequestDto;
 import com.ibm.im.dto.ResponseDto;
+import com.ibm.im.dto.SearchStudentResponseDto;
+import com.ibm.im.dto.StudentDto2;
 import com.ibm.im.entity.AddressEntity;
 import com.ibm.im.entity.CourseEntity;
 import com.ibm.im.entity.StudentCourseMappingEntity;
@@ -211,11 +213,12 @@ public class StudentService {
 		throw new NotFoundException("Address not found");
 
 	}
+
 	public GetStudentResponseDto getStudent(Integer studentId) {
 		log.info("inside getStudent()-StudentService");
 		Optional<StudentEntity> optional = studentRepository.findById(studentId);
 		StudentEntity studentEntity = optional.get();
-		List<AddressDto> AddressDtoList = studentEntity.getAddressEntities().stream().map(ae ->{
+		List<AddressDto> AddressDtoList = studentEntity.getAddressEntities().stream().map(ae -> {
 			AddressDto addressDto = new AddressDto();
 			addressDto.setStreet(ae.getStreet());
 			addressDto.setCity(ae.getCity());
@@ -223,19 +226,39 @@ public class StudentService {
 			addressDto.setType(ae.getType());
 			return addressDto;
 		}).collect(Collectors.toList());
-		List<CourseDto> courseDtoList = studentEntity.getMappingEntities().stream().map(sce -> sce.getCourseEntity()).map(ce -> {
-			CourseDto courseDto = new CourseDto();
-			courseDto.setName(ce.getName());
-			courseDto.setDurationDays(ce.getDurationDays());
-			return courseDto;
-		}).collect(Collectors.toList());
+		List<CourseDto> courseDtoList = studentEntity.getMappingEntities().stream().map(sce -> sce.getCourseEntity())
+				.map(ce -> {
+					CourseDto courseDto = new CourseDto();
+					courseDto.setName(ce.getName());
+					courseDto.setDurationDays(ce.getDurationDays());
+					return courseDto;
+				}).collect(Collectors.toList());
 		GetStudentResponseDto responseDto = new GetStudentResponseDto();
 		responseDto.setStudentName(studentEntity.getName());
 		responseDto.setAadharNo(studentEntity.getAadharNo());
 		responseDto.setAddressDtoList(AddressDtoList);
 		responseDto.setCourseDtoList(courseDtoList);
-		
+
 		return responseDto;
-		
+
+	}
+
+	public SearchStudentResponseDto searchStudent(String searchText) {
+		log.info("inside searchStudent()-service ");
+		List<StudentEntity> studentEntities = studentRepository.searchStudentsWithNameOrAadhar(searchText);
+		int size = studentEntities.size();
+		log.info("studentEntities size - " + size);
+		List<StudentDto2> studentDtoList = studentEntities.stream().map(se -> {
+			StudentDto2 studentDto2 = new StudentDto2();
+			studentDto2.setName(se.getName());
+			studentDto2.setAadharNo(se.getAadharNo());
+			return studentDto2;
+		}).collect(Collectors.toList());
+
+		SearchStudentResponseDto responseDto = new SearchStudentResponseDto();
+		responseDto.setStudentData(studentDtoList);
+
+		return responseDto;
+
 	}
 }

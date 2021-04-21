@@ -1,13 +1,10 @@
 package com.ibm.im.controller;
 
-import javax.ws.rs.PathParam;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ibm.im.Service.StudentService;
@@ -18,6 +15,7 @@ import com.ibm.im.dto.RemoveAddressRequestDto;
 import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
 import com.ibm.im.dto.RemoveStudentRequestDto;
 import com.ibm.im.dto.ResponseDto;
+import com.ibm.im.dto.SearchStudentResponseDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,15 +69,22 @@ public class StudentController {
 		return responseDto;
 
 	}
-	
-	@GetMapping(path="/api/student/get/{studentId}")
+
+	@GetMapping(path = "/api/student/get/{studentId}")
 	public GetStudentResponseDto getStudent(@PathVariable(name = "studentId") Integer studentId) {
 		log.info("inside getStudent()-Controller");
 		GetStudentResponseDto responseDto = studentService.getStudent(studentId);
-		
+
 		return responseDto;
-		
+
+	}
+
+	@GetMapping(path = "/api/student/search/{searchText}")
+	public SearchStudentResponseDto searchStudent(@PathVariable(name = "searchText") String searchText) {
+		log.info("inside searchStudent()-controller");
+		log.info("searchText: "+searchText);
+		SearchStudentResponseDto responseDto = studentService.searchStudent(searchText);
+		return responseDto;
 	}
 
 }
-
