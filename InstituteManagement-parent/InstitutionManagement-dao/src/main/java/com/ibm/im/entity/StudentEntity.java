@@ -10,6 +10,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,14 +18,16 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-@Table(name = "Student")
+@Table(name = "Student",uniqueConstraints = @UniqueConstraint(columnNames = "aadharNo",name = "UK_STUDENT_AADHARNO"))
 public class StudentEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	
 	@Column(nullable = false)
 	private String name;
-	@Column(nullable = false,unique = true)
+	
+	@Column(nullable = false)
 	private Integer aadharNo;
 
 	@OneToMany(mappedBy = "studentEntity",cascade = { CascadeType.MERGE, CascadeType.PERSIST,CascadeType.REMOVE} )

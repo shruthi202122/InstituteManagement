@@ -1,6 +1,7 @@
 package com.ibm.im.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +13,9 @@ import com.ibm.im.entity.StudentEntity;
 public interface StudentRepository extends JpaRepository<StudentEntity, Integer> {
 
 	@Query(value = "select s from StudentEntity s where s.name like %:searchText% or s.aadharNo like %:searchText%")
-	public List<StudentEntity> searchStudentsWithNameOrAadhar(String searchText);
+	List<StudentEntity> searchStudentsWithNameOrAadhar(String searchText);
+
+	Optional<StudentEntity> findByAadharNo(Integer aadharNo);
 	
 	
 }

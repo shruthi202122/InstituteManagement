@@ -54,6 +54,13 @@ public class StudentService {
 				|| requestDto.getName().trim().equals("")) {
 			throw new BadRequestException("Trying to insert Null values");
 		}
+		Optional<StudentEntity> optional = studentRepository.findByAadharNo(requestDto.getAadharNo());
+		if(optional.isPresent()) {
+			StudentEntity studentEntity2 = optional.get();
+			if(requestDto.getAadharNo()==studentEntity2.getAadharNo()) {
+				throw new BadRequestException("AadharNo already exist");
+			}
+		}
 
 		StudentEntity studentEntity = new StudentEntity();
 		studentEntity.setName(requestDto.getName());
