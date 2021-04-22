@@ -27,7 +27,6 @@ import com.ibm.im.entity.AddressEntity;
 import com.ibm.im.entity.CourseEntity;
 import com.ibm.im.entity.StudentCourseMappingEntity;
 import com.ibm.im.entity.StudentEntity;
-import com.ibm.im.repository.AddressRepository;
 import com.ibm.im.repository.CourseRepository;
 import com.ibm.im.repository.StudentCourseMappingRepository;
 import com.ibm.im.repository.StudentRepository;
@@ -44,8 +43,6 @@ public class StudentService {
 	private CourseRepository courseRepository;
 	@Autowired
 	private StudentCourseMappingRepository studentCourseMappingRepository;
-	@Autowired
-	private AddressRepository addressRepository;
 
 	public ResponseDto createStudent(CreateStudentRequestDto requestDto) {
 		log.info("from createStudent()-service ");
@@ -55,11 +52,8 @@ public class StudentService {
 			throw new BadRequestException("Trying to insert Null values");
 		}
 		Optional<StudentEntity> optional = studentRepository.findByAadharNo(requestDto.getAadharNo());
-		if(optional.isPresent()) {
-			StudentEntity studentEntity2 = optional.get();
-			if(requestDto.getAadharNo()==studentEntity2.getAadharNo()) {
-				throw new BadRequestException("AadharNo already exist");
-			}
+		if (optional.isPresent()) {
+			throw new BadRequestException("AadharNo already exist");
 		}
 
 		StudentEntity studentEntity = new StudentEntity();
@@ -224,6 +218,9 @@ public class StudentService {
 	public GetStudentResponseDto getStudent(Integer studentId) {
 		log.info("inside getStudent()-StudentService");
 		Optional<StudentEntity> optional = studentRepository.findById(studentId);
+		if(optional.isEmpty()) {
+			throw new NotFoundException("Student not exist");
+		}
 		StudentEntity studentEntity = optional.get();
 		List<AddressDto> AddressDtoList = studentEntity.getAddressEntities().stream().map(ae -> {
 			AddressDto addressDto = new AddressDto();
