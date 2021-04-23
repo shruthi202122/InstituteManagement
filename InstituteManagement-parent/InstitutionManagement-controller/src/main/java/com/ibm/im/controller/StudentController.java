@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 
 import com.ibm.im.Service.StudentService;
 import com.ibm.im.dto.CreateStudentRequestDto;
@@ -16,6 +17,7 @@ import com.ibm.im.dto.RemoveStudentFromCourseRequestDto;
 import com.ibm.im.dto.RemoveStudentRequestDto;
 import com.ibm.im.dto.ResponseDto;
 import com.ibm.im.dto.SearchStudentResponseDto;
+import com.user.dto.UserDto;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -85,6 +87,25 @@ public class StudentController {
 		log.info("searchText: "+searchText);
 		SearchStudentResponseDto responseDto = studentService.searchStudent(searchText);
 		return responseDto;
+	}
+//	@GetMapping(path="/api/getUser")
+//	public String getUser() {
+//		log.info("inside getUser()--calling external api");
+//		String uri="https://jsonplaceholder.typicode.com/users/1";
+//		RestTemplate restTemplate = new RestTemplate();
+//		String string = restTemplate.getForObject(uri, String.class);
+//		return string;
+//	}
+	
+	@GetMapping(path = "/api/getUser")
+	public UserDto getUser() {
+		log.info("inside getUser()--calling external api");
+		String uri="https://jsonplaceholder.typicode.com/users/1";
+		RestTemplate restTemplate = new RestTemplate();
+		UserDto userDto = restTemplate.getForObject(uri, UserDto.class);
+		
+		return userDto;
+		
 	}
 
 }
